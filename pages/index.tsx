@@ -1,211 +1,316 @@
-import Head from 'next/head'
-import Image from 'next/image'
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import { Dialog, Transition } from '@headlessui/react'
+import { GetStaticProps } from 'next'
+import Prismic from 'prismic-javascript'
+import { RichText, RichTextBlock } from 'prismic-reactjs'
+import React, { Fragment, useState } from 'react'
+import ImageGallery from 'react-image-gallery'
 
-export const Home = (): JSX.Element => (
-  <div className="container">
-    <Head>
-      <title>Create Next App</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+import ContactForm from '../components/ContactForm'
+import { Layout } from '../components/Layout'
+import { PrismicClient } from '../lib/api'
 
-    <main>
-      <h1 className="title">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+export interface PrismicDocument<T> {
+    id: string
+    uid?: string
+    url?: string
+    type: string
+    href: string
+    tags: string[]
+    slugs: string[]
+    lang?: string
+    alternate_languages: string[]
+    first_publication_date: string | null
+    last_publication_date: string | null
+    data: T
+}
 
-      <p className="description">
-        Get started by editing <code>pages/index.tsx</code>
-      </p>
+interface BaseProps {
+    title: RichTextBlock[]
+    body: RichTextBlock[]
+    image: RichTextBlock
+}
 
-      <button
-        onClick={() => {
-          window.alert('With typescript and Jest')
-        }}
-      >
-        Test Button
-      </button>
+interface WorkProps extends BaseProps {
+    url: RichTextBlock
+    main_image: RichTextBlock
+    images: Array<{ image: RichTextBlock }>
+}
 
-      <div className="grid">
-        <a href="https://nextjs.org/docs" className="card">
-          <h3>Documentation &rarr;</h3>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+interface AboutProps extends BaseProps {}
 
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
-        </a>
+interface WorkIntroProps extends BaseProps {}
 
-        <a
-          href="https://github.com/vercel/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
-        </a>
+interface ContactProps extends BaseProps {}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          className="card"
-        >
-          <h3>Deploy &rarr;</h3>
-          <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-        </a>
-      </div>
-    </main>
+interface TestimonialProps {
+    slice_label: string
+    slice_type: string
+    primary: {
+        title: RichTextBlock[]
+        paragraph: RichTextBlock[]
+    }
+    items: {
+        image: RichTextBlock
+        title: string
+        person: string
+        testimonial: RichTextBlock[]
+    }[]
+}
 
-    <footer>
-      <a
-        href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Powered by{' '}
-        <Image src="/vercel.svg" alt="Vercel Logo" height={'32'} width={'64'} />
-      </a>
-    </footer>
+const Divider: React.FC = () => <div className="shapedividers_com-6845" />
 
-    <style jsx>{`
-      .container {
-        min-height: 100vh;
-        padding: 0 0.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+const me: React.FC<{
+    work: PrismicDocument<WorkProps>[]
+    contact: PrismicDocument<ContactProps>
+    about: PrismicDocument<AboutProps>
+    workIntro: PrismicDocument<WorkIntroProps>
+    testimonials: TestimonialProps
+}> = ({ work, workIntro, about, testimonials, contact }) => {
+    const [selected, setSelected] = useState<PrismicDocument<WorkProps>>()
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
 
-      main {
-        padding: 5rem 0;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-
-      footer {
-        width: 100%;
-        height: 100px;
-        border-top: 1px solid #eaeaea;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      footer img {
-        margin-left: 0.5rem;
-      }
-
-      footer a {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .title a {
-        color: #0070f3;
-        text-decoration: none;
-      }
-
-      .title a:hover,
-      .title a:focus,
-      .title a:active {
-        text-decoration: underline;
-      }
-
-      .title {
-        margin: 0;
-        line-height: 1.15;
-        font-size: 4rem;
-      }
-
-      .title,
-      .description {
-        text-align: center;
-      }
-
-      .description {
-        line-height: 1.5;
-        font-size: 1.5rem;
-      }
-
-      code {
-        background: #fafafa;
-        border-radius: 5px;
-        padding: 0.75rem;
-        font-size: 1.1rem;
-        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-      }
-
-      .grid {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-
-        max-width: 800px;
-        margin-top: 3rem;
-      }
-
-      .card {
-        margin: 1rem;
-        flex-basis: 45%;
-        padding: 1.5rem;
-        text-align: left;
-        color: inherit;
-        text-decoration: none;
-        border: 1px solid #eaeaea;
-        border-radius: 10px;
-        transition: color 0.15s ease, border-color 0.15s ease;
-      }
-
-      .card:hover,
-      .card:focus,
-      .card:active {
-        color: #0070f3;
-        border-color: #0070f3;
-      }
-
-      .card h3 {
-        margin: 0 0 1rem 0;
-        font-size: 1.5rem;
-      }
-
-      .card p {
-        margin: 0;
-        font-size: 1.25rem;
-        line-height: 1.5;
-      }
-
-      @media (max-width: 600px) {
-        .grid {
-          width: 100%;
-          flex-direction: column;
+    const handleClickImg = (id: string) => {
+        const currentWorkItem = work.find((i) => i.id === id)
+        if (currentWorkItem) {
+            setSelected(currentWorkItem)
+            setTimeout(() => {
+                setModalOpen(true)
+            }, 100)
         }
-      }
-    `}</style>
+    }
 
-    <style jsx global>{`
-      html,
-      body {
-        padding: 0;
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-          Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-      }
+    const handleCloseModal = () => setModalOpen(false)
 
-      * {
-        box-sizing: border-box;
-      }
-    `}</style>
-  </div>
-)
+    return (
+        <Layout>
+            <div className="grid grid-cols-2 w-full min-h-screen">
+                <div className="col-span-1 flex flex-col items-start justify-center font-doodle p-10 space-y-5 bg-gray-900">
+                    <div className="text-7xl text-pink-500">
+                        Manyana<span className="text-gray-50">Dev</span>
+                    </div>
+                    <div className="text-3xl text-gray-50">Bring your ideas to life</div>
+                </div>
+                <div className="bg-gray-100 bg-hero-image bg-no-repeat bg-left bg-fixed relative">
+                    <Divider />
+                </div>
+            </div>
+            <div className="grid md:grid-cols-3 min-h-50vh">
+                <div className="col-span-1 flex flex-col items-center justify-center bg-chimp-image bg-no-repeat bg-center bg-cover"></div>
+                <div className="col-span-2 flex flex-col items-start justify-center p-24 bg-pink-600 shadow-inner leading-10">
+                    {about.data && (
+                        <>
+                            <div className="text-gray-900 text-5xl py-5">
+                                <RichText render={about.data.title} />
+                            </div>
+                            <div className="text-gray-50 text-xl leading-8">
+                                <RichText render={about.data.body} />
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+            <div className="bg-gray-900 px-20 pt-20 space-y-10 pattern-circuit bg-fixed" id="#work">
+                {workIntro.data && (
+                    <>
+                        <div className="text-5xl uppercase font-doodle text-pink-500">
+                            <RichText render={workIntro.data.title} />
+                        </div>
+                        <div className="text-lg uppercase tracking-widest">
+                            <RichText render={workIntro.data.body} />
+                        </div>
+                    </>
+                )}
+            </div>
+            <div className="bg-gray-900 p-20 space-y-10 pattern-circuit bg-fixed">
+                <div className="col-span-2">
+                    <div className="grid grid-cols-3">
+                        {work.map((w, i) => (
+                            <div
+                                key={i}
+                                className="hover:opacity-90 duration-200 cursor-pointer flex items-center justify-center h-80 bg-no-repeat bg-center bg-contain p-12 bg-transparent border-2 border-pink-500  hover:bg-opacity-90 relative work-image"
+                                onClick={() => handleClickImg(w.id)}
+                            >
+                                <img
+                                    src={w.data.main_image.url}
+                                    alt=""
+                                    className="w-44 object-contain hover:bg-opacity-10"
+                                />
+                                <div className="img-caption bg-gray-900 bg-opacity-70">
+                                    <div className="text-6xl text-pink-500">
+                                        <RichText render={w.data.title} />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <Transition appear show={modalOpen} as={Fragment}>
+                            <Dialog
+                                as="div"
+                                className="fixed inset-0 z-10 overflow-y-auto bg-gray-900 bg-opacity-70"
+                                onClose={handleCloseModal}
+                            >
+                                <div className="min-h-screen px-4 text-center">
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <Dialog.Overlay className="fixed inset-0" />
+                                    </Transition.Child>
 
-export default Home
+                                    {/* This element is to trick the browser into centering the modal contents. */}
+                                    <span className="inline-block h-screen align-middle" aria-hidden="true">
+                                        &#8203;
+                                    </span>
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0 scale-95"
+                                        enterTo="opacity-100 scale-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100 scale-100"
+                                        leaveTo="opacity-0 scale-95"
+                                    >
+                                        <div className="inline-block p-12 my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-900 shadow-xl rounded-2xl h-75vh w-75vw border-pink-500 border-2">
+                                            <div className="flex flex-col justify-between items-start h-full">
+                                                <div>
+                                                    <Dialog.Title
+                                                        as="h3"
+                                                        className="text-5xl font-doodle font-medium leading-6 text-pink-500 py-8"
+                                                    >
+                                                        <RichText render={selected?.data?.title} />
+                                                    </Dialog.Title>
+                                                    <div className="mt-2">
+                                                        <p className="text-xl font-doodle text-gray-50 leading-8">
+                                                            <RichText render={selected?.data?.body} />
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex mx-auto">
+                                                    <ImageGallery
+                                                        additionalClass="h-62"
+                                                        items={selected?.data.images.map((t) => ({
+                                                            original: t.image.url,
+                                                        }))}
+                                                        renderItem={(item) => (
+                                                            <div className="w-1/2 flex flex-col items-center justify-center mx-auto">
+                                                                <img src={item.original} alt="" />
+                                                            </div>
+                                                        )}
+                                                        showThumbnails={false}
+                                                        showPlayButton={false}
+                                                        showFullscreenButton={false}
+                                                    />
+                                                </div>
+
+                                                <div className="mt-4 ml-auto">
+                                                    <button
+                                                        type="button"
+                                                        className="inline-flex justify-center px-4 py-2 text-base font-medium text-gray-50 bg-pink-500 border border-transparent rounded-md hover:bg-pink-600 focus:outline-none"
+                                                        onClick={handleCloseModal}
+                                                    >
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Transition.Child>
+                                </div>
+                            </Dialog>
+                        </Transition>
+                    </div>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 bg-gray-900 text-white border-b-2 border-pink-500">
+                <div className="container mx-auto p-20 space-y-10">
+                    <div className="text-5xl text-pink-500">
+                        <RichText render={testimonials.primary.title} />
+                    </div>
+                    <div className="text-2xl text-gray-50">
+                        <RichText render={testimonials.primary.paragraph} />
+                    </div>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 h-50vh bg-gray-900 text-white px-20 pattern-jigsaw bg-fixed border-b-8 border-double border-pink-500">
+                <div className="flex flex-col items-start justify-center px-24 w-full">
+                    <ImageGallery
+                        additionalClass="w-full"
+                        items={testimonials.items.map((t) => ({
+                            original: t.person,
+                            originalTitle: t.title,
+                            description: RichText.asText(t.testimonial),
+                        }))}
+                        renderItem={(item) => (
+                            <div className="w-1/2 flex flex-col items-end justify-center mx-auto">
+                                <p
+                                    className="text-xl leading-10 mb-5"
+                                    style={{
+                                        whiteSpace: 'break-spaces',
+                                    }}
+                                >
+                                    {item.description}
+                                </p>
+                                <div className="text-2xl uppercase font-doodle text-pink-500">
+                                    {item.original}
+                                </div>
+                                <div className="text-xl uppercase font-doodle text-pink-500">
+                                    {item.originalTitle}
+                                </div>
+                            </div>
+                        )}
+                        showBullets={false}
+                        showThumbnails={false}
+                        showPlayButton={false}
+                        showFullscreenButton={false}
+                    />
+                </div>
+            </div>
+            <div className="grid grid-cols-2 w-full min-h-screen pattern-contours bg-fixed">
+                <div className="col-span-1 flex flex-col items-center justify-center">
+                    <ContactForm />
+                </div>
+
+                <div className="col-span-1 flex flex-col items-start justify-center">
+                    <div className="text-7xl uppercase font-doodle text-pink-500">
+                        <RichText render={contact.data.title} />
+                    </div>
+                    <div className="leading-10 w-2/3">
+                        <RichText render={contact.data.body} />
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    )
+}
+
+export default me
+
+export const getStaticProps: GetStaticProps = async () => {
+    const { results: workResults } = await PrismicClient.query(Prismic.Predicates.at('document.type', 'w'))
+    const { results: workIntroResults } = await PrismicClient.query(
+        Prismic.Predicates.at('document.type', 'work-intro')
+    )
+    const { results: aboutResults } = await PrismicClient.query(
+        Prismic.Predicates.at('document.type', 'about')
+    )
+    const { results: quoteResults } = await PrismicClient.query(
+        Prismic.Predicates.at('document.type', 'quote')
+    )
+    const { results: contactResults } = await PrismicClient.query(
+        Prismic.Predicates.at('document.type', 'contact')
+    )
+
+    return {
+        props: {
+            work: workResults,
+            workIntro: workIntroResults[0],
+            about: aboutResults[0],
+            testimonials: quoteResults[0].data.body1[0],
+            contact: contactResults[0],
+        },
+    }
+}
