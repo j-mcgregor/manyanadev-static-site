@@ -98,26 +98,26 @@ const me: React.FC<{
             <div className="grid md:grid-cols-3 min-h-50vh">
                 <div className="col-span-1 flex flex-col items-center justify-center bg-chimp-image bg-no-repeat bg-center bg-cover"></div>
                 <div className="col-span-2 flex flex-col items-start justify-center p-24 bg-pink-600 shadow-inner leading-10">
-                    {about.data && (
+                    {about?.data && (
                         <>
                             <div className="text-gray-900 text-5xl py-5">
-                                <RichText render={about.data.title} />
+                                <RichText render={about.data?.title} />
                             </div>
                             <div className="text-gray-50 text-xl leading-8">
-                                <RichText render={about.data.body} />
+                                <RichText render={about.data?.body} />
                             </div>
                         </>
                     )}
                 </div>
             </div>
             <div className="bg-gray-900 px-20 pt-20 space-y-10 pattern-circuit bg-fixed" id="#work">
-                {workIntro.data && (
+                {workIntro?.data && (
                     <>
                         <div className="text-5xl uppercase font-doodle text-pink-500">
-                            <RichText render={workIntro.data.title} />
+                            <RichText render={workIntro.data?.title} />
                         </div>
                         <div className="text-lg uppercase tracking-widest">
-                            <RichText render={workIntro.data.body} />
+                            <RichText render={workIntro.data?.body} />
                         </div>
                     </>
                 )}
@@ -132,13 +132,13 @@ const me: React.FC<{
                                 onClick={() => handleClickImg(w.id)}
                             >
                                 <img
-                                    src={w.data.main_image.url}
+                                    src={w.data?.main_image.url}
                                     alt=""
                                     className="w-44 object-contain hover:bg-opacity-10"
                                 />
                                 <div className="img-caption bg-gray-900 bg-opacity-70">
                                     <div className="text-6xl text-pink-500">
-                                        <RichText render={w.data.title} />
+                                        <RichText render={w.data?.title} />
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ const me: React.FC<{
                                                 <div className="flex mx-auto">
                                                     <ImageGallery
                                                         additionalClass="h-62"
-                                                        items={selected?.data.images.map((t) => ({
+                                                        items={selected?.data?.images.map((t) => ({
                                                             original: t.image.url,
                                                         }))}
                                                         renderItem={(item) => (
@@ -276,10 +276,10 @@ const me: React.FC<{
 
                 <div className="col-span-1 flex flex-col items-start justify-center">
                     <div className="text-7xl uppercase font-doodle text-pink-500">
-                        <RichText render={contact.data.title} />
+                        <RichText render={contact.data?.title} />
                     </div>
                     <div className="leading-10 w-2/3">
-                        <RichText render={contact.data.body} />
+                        <RichText render={contact.data?.body} />
                     </div>
                 </div>
             </div>
@@ -309,7 +309,7 @@ export const getStaticProps: GetStaticProps = async () => {
             work: workResults,
             workIntro: workIntroResults[0],
             about: aboutResults[0],
-            testimonials: quoteResults[0].data.body1[0],
+            testimonials: quoteResults[0].data?.body1[0],
             contact: contactResults[0],
         },
     }
