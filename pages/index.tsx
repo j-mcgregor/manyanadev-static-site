@@ -58,7 +58,7 @@ interface TestimonialProps {
     }[]
 }
 
-const Divider: React.FC = () => <div className="shapedividers_com-6845" />
+const Divider: React.FC = () => <div className="shapedividers_com-6845 hidden sm:block" />
 
 const me: React.FC<{
     work: PrismicDocument<WorkProps>[]
@@ -85,19 +85,19 @@ const me: React.FC<{
     return (
         <Layout>
             <div className="grid grid-cols-2 w-full min-h-screen">
-                <div className="col-span-1 flex flex-col items-start justify-center font-doodle p-10 space-y-5 bg-gray-900">
-                    <div className="text-7xl text-pink-500">
+                <div className="col-span-2 sm:col-span-1 flex flex-col items-center sm:items-start justify-center font-doodle p-10 space-y-5 bg-gray-900">
+                    <div className="text-4xl md:text-7xl text-pink-500">
                         Manyana<span className="text-gray-50">Dev</span>
                     </div>
-                    <div className="text-3xl text-gray-50">Bring your ideas to life</div>
+                    <div className="text-xl md:text-3xl text-gray-50">Bring your ideas to life</div>
                 </div>
-                <div className="bg-gray-100 bg-hero-image bg-no-repeat bg-left bg-fixed relative">
+                <div className="col-span-2 sm:col-span-1 bg-gray-100 bg-hero-image bg-no-repeat bg-left bg-fixed relative">
                     <Divider />
                 </div>
             </div>
-            <div className="grid md:grid-cols-3 min-h-50vh">
-                <div className="col-span-1 flex flex-col items-center justify-center bg-chimp-image bg-no-repeat bg-center bg-cover"></div>
-                <div className="col-span-2 flex flex-col items-start justify-center p-24 bg-pink-600 shadow-inner leading-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 min-h-50vh">
+                <div className="col-span-1 sm:col-span-1 flex flex-col items-center justify-center bg-chimp-image bg-no-repeat bg-center bg-cover h-50vh sm:h-auto"></div>
+                <div className="col-span-1 sm:col-span-2 flex flex-col items-start justify-center p-4 sm:p-24 bg-pink-600 shadow-inner leading-10">
                     {about?.data && (
                         <>
                             <div className="text-gray-900 text-5xl py-5">
@@ -110,10 +110,10 @@ const me: React.FC<{
                     )}
                 </div>
             </div>
-            <div className="bg-gray-900 px-20 pt-20 space-y-10 pattern-circuit bg-fixed" id="#work">
+            <div className="bg-gray-900 p-4 sm:p-24 pt-20 space-y-10 pattern-circuit bg-fixed" id="#work">
                 {workIntro?.data && (
                     <>
-                        <div className="text-5xl uppercase font-doodle text-pink-500">
+                        <div className="text-2xl md:text-5xl uppercase font-doodle text-pink-500">
                             <RichText render={workIntro.data?.title} />
                         </div>
                         <div className="text-lg uppercase tracking-widest">
@@ -122,9 +122,9 @@ const me: React.FC<{
                     </>
                 )}
             </div>
-            <div className="bg-gray-900 p-20 space-y-10 pattern-circuit bg-fixed">
+            <div className="bg-gray-900 p-4 sm:p-24 space-y-10 pattern-circuit bg-fixed">
                 <div className="col-span-2">
-                    <div className="grid grid-cols-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3">
                         {work.map((w, i) => (
                             <div
                                 key={i}
@@ -175,7 +175,7 @@ const me: React.FC<{
                                         leaveFrom="opacity-100 scale-100"
                                         leaveTo="opacity-0 scale-95"
                                     >
-                                        <div className="inline-block p-12 my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-900 shadow-xl rounded-2xl h-75vh w-75vw border-pink-500 border-2">
+                                        <div className="inline-block p-2 sm:p-12 my-2 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-900 shadow-xl rounded-2xl sm:h-75vh h-screen sm:w-75vw border-pink-500 border-2 overflow-y-scroll">
                                             <div className="flex flex-col justify-between items-start h-full">
                                                 <div>
                                                     <Dialog.Title
@@ -225,18 +225,18 @@ const me: React.FC<{
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 bg-gray-900 text-white border-b-2 border-pink-500">
-                <div className="container mx-auto p-20 space-y-10">
-                    <div className="text-5xl text-pink-500">
+            <div className="grid grid-cols-1 bg-gray-900 text-gray-50 border-b-2 border-pink-500">
+                <div className="container mx-auto p-20 space-y-10 flex flex-col items-center sm:items-start">
+                    <div className="text-2xl sm:text-5xl text-pink-500">
                         <RichText render={testimonials.primary.title} />
                     </div>
-                    <div className="text-2xl text-gray-50">
+                    <div className="text-lg sm:text-2xl text-gray-50">
                         <RichText render={testimonials.primary.paragraph} />
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 h-50vh bg-gray-900 text-white px-20 pattern-jigsaw bg-fixed border-b-8 border-double border-pink-500">
-                <div className="flex flex-col items-start justify-center px-24 w-full">
+            <div className="grid grid-cols-1 h-50vh bg-gray-900 text-gray-50 mx-0 md:px-20 pattern-jigsaw bg-fixed border-b-8 border-double border-pink-500">
+                <div className="flex flex-col items-start justify-center px-0 md:px-24 w-full">
                     <ImageGallery
                         additionalClass="w-full"
                         items={testimonials.items.map((t) => ({
@@ -245,19 +245,19 @@ const me: React.FC<{
                             description: RichText.asText(t.testimonial),
                         }))}
                         renderItem={(item) => (
-                            <div className="w-1/2 flex flex-col items-end justify-center mx-auto">
+                            <div className="w-2/3 md:w-1/2 flex flex-col items-end justify-center mx-auto">
                                 <p
-                                    className="text-xl leading-10 mb-5"
+                                    className="text-base sm:text-xl leading-10 mb-5"
                                     style={{
                                         whiteSpace: 'break-spaces',
                                     }}
                                 >
                                     {item.description}
                                 </p>
-                                <div className="text-2xl uppercase font-doodle text-pink-500">
+                                <div className="text-lg sm:text-2xl uppercase font-doodle text-pink-500">
                                     {item.original}
                                 </div>
-                                <div className="text-xl uppercase font-doodle text-pink-500">
+                                <div className="text-base sm:text-xl uppercase font-doodle text-pink-500">
                                     {item.originalTitle}
                                 </div>
                             </div>
@@ -269,16 +269,16 @@ const me: React.FC<{
                     />
                 </div>
             </div>
-            <div className="grid grid-cols-2 w-full min-h-screen pattern-contours bg-fixed">
-                <div className="col-span-1 flex flex-col items-center justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 w-full md:min-h-screen pattern-contours bg-fixed py-10">
+                <div className="my-5 md:my-0 col-span-1 flex flex-col items-center justify-center">
                     <ContactForm />
                 </div>
 
-                <div className="col-span-1 flex flex-col items-start justify-center">
-                    <div className="text-7xl uppercase font-doodle text-pink-500">
+                <div className="col-span-1 flex flex-col items-center md:items-start justify-center sm:p-20">
+                    <div className="text-xl sm:text-2xl md:text-7xl uppercase font-doodle text-pink-500">
                         <RichText render={contact.data?.title} />
                     </div>
-                    <div className="leading-10 w-2/3">
+                    <div className="leading-7 md:leading-10 md:w-2/3 px-4 text-center md:text-left">
                         <RichText render={contact.data?.body} />
                     </div>
                 </div>
