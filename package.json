@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@headlessui/react": "^1.4.1",
+        "@makotot/ghostui": "^2.0.0",
         "@react-spring/parallax": "^9.3.0",
         "daisyui": "^1.16.0",
         "next": "latest",
