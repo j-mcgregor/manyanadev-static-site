@@ -32,12 +32,12 @@ module.exports = {
         },
         fontFamily: {
             doodle: ['doodle'],
-            zcool: ['zcool'],
-            fjalla: ['FjallaOne'],
+            yuji: ['Yuji Boku', 'serif'],
+            shalimar: ['Shalimar', 'serif'],
         },
     },
     variants: {
         extend: {},
     },
-    plugins: [require('daisyui')],
+    plugins: [],
 }

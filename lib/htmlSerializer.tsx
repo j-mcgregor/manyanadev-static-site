@@ -6,7 +6,7 @@ export const htmlSerializer = (type, _element, _content, children, _key) => {
         case Elements.heading1:
             return <>{children}</>
         case Elements.paragraph:
-            return <p className="w-full">{children}</p>
+            return <p className="w-full text-white">{children}</p>
         default:
             return null
     }

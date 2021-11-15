@@ -165,7 +165,10 @@ const me: React.FC<{
                                             <RichText render={about.data?.title} />
                                         </div>
                                         <div className="text-gray-50 text-xl leading-8">
-                                            <RichText render={about.data?.body} />
+                                            <RichText
+                                                render={about.data?.body}
+                                                htmlSerializer={htmlSerializer}
+                                            />
                                         </div>
                                     </>
                                 )}
@@ -182,7 +185,10 @@ const me: React.FC<{
                                         <RichText render={workIntro.data?.title} />
                                     </div>
                                     <div className="text-lg uppercase tracking-widest">
-                                        <RichText render={workIntro.data?.body} />
+                                        <RichText
+                                            render={workIntro.data?.body}
+                                            htmlSerializer={htmlSerializer}
+                                        />
                                     </div>
                                 </>
                             )}
